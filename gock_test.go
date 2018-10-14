@@ -412,6 +412,33 @@ func TestMockRegExpMatching(t *testing.T) {
 	st.Expect(t, string(body)[:13], `{"foo":"bar"}`)
 }
 
+func TestObserve(t *testing.T) {
+	defer after()
+	var observedRequest *http.Request
+	var observedMock Mock
+	Observe(func(request *http.Request, mock Mock) {
+		observedRequest = request
+		observedMock = mock
+	})
+	New("http://observe-foo.com").Reply(200)
+	req, _ := http.NewRequest("POST", "http://observe-foo.com", nil)
+
+	http.DefaultClient.Do(req)
+
+	st.Expect(t, observedRequest.Host, "observe-foo.com")
+	st.Expect(t, observedMock.Request().URLStruct.Host, "observe-foo.com")
+}
+
+func ExampleObserveRequest() {
+	defer after()
+	Observe(DumpRequest)
+	New("http://foo.com").Reply(201)
+
+	req, _ := http.NewRequest("POST", "http://foo.com/abcd", strings.NewReader(`{"a": "b"}`))
+	req.Header.Set("Authorization", "Bearer 1234")
+	http.DefaultClient.Do(req)
+}
+
 func after() {
 	Flush()
 	Disable()
