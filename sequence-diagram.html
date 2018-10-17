@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="https://bramp.github.io/js-sequence-diagrams/js/sequence-diagram-min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <div class="container-fluid">
+        <h1>Login</h1>
+        <p class="lead">logs in a registered user</p>
+    
+        <div class="card">
+            <div class="card-body">
+                <div id="d" class="row justify-content-center"></div>
+            </div>
+        </div>
+    
+
+	<br><br>
+    <p class="lead">Request/Response wire representation</p>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Payload</th>
+        </tr>
+        </thead>
+        <tbody>
+        
+
+        <tr>
+            <th scope="row">1</th>
+            <td>
+<pre>
+POST /login HTTP/1.1
+Host: gol
+User-Agent: Go-http-client/1.1
+Content-Length: 134
+Content-Type: application/json
+Cookie: JSESSIONID=JSID1234
+Accept-Encoding: gzip
+
+{
+  &#34;username&#34;: &#34;registerduser@me.com&#34;,
+  &#34;password&#34;: &#34;Password123!&#34;,
+  &#34;recaptchaToken&#34;: &#34;test-token&#34;
+}
+
+</pre>
+            </td>
+        </tr>
+        
+
+        <tr>
+            <th scope="row">2</th>
+            <td>
+<pre>
+POST /identity/login HTTP/1.1
+Host: identity
+Content-Length: 120
+Accept: application/json
+Content-Type: application/json
+Cookie: JSESSIONID=JSID1234
+Accept-Encoding: gzip
+
+{
+    &#34;id&#34;:&#34;registerduser@me.com&#34;,
+    &#34;password&#34;:&#34;Password123!&#34;
+}
+</pre>
+            </td>
+        </tr>
+        
+
+        <tr>
+            <th scope="row">3</th>
+            <td>
+<pre>
+HTTP/1.1 201 Created
+Content-Length: 390
+Content-Type: application/json
+Set-Cookie: WCS_LOGIN=9876
+
+{
+  &#34;userId&#34;: &#34;65646426&#34;,
+  &#34;authToken&#34;: &#34;65646426%2CtgprwJuF9njZ7%3D%3D&#34;
+}
+
+</pre>
+            </td>
+        </tr>
+
+
+        <tr>
+            <th scope="row">4</th>
+            <td>
+<pre>
+HTTP/1.1 201 OK
+Connection: close
+Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+Content-Type: application/json
+Expires: Thu, 01 Jan 1970 00:00:00 GMT
+Pragma: no-cache
+Set-Cookie: AUTH_LOGIN_TOKEN=65646426%2CtgprwJuF9njZ7%3D%3D; Path=/
+Strict-Transport-Security: max-age=15724800; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+
+</pre>
+            </td>
+        </tr>
+        
+        </tbody>
+    </table>
+    </div>
+<script>
+    Diagram.parse("Consumer-\x3elogin: (1) POST \/login\nlogin-\x3eidentity: (2) POST http:\/\/identity\/login\nidentity-\x3e\x3elogin: (3) Response 201\nlogin-\x3e\x3eConsumer: (4) Response 201\n").drawSVG("d", {theme: 'simple', 'font-size': 14});
+</script>
+<style>
+    body {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+</style>
+</body>
+</html>
+
